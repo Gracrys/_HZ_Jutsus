@@ -25,57 +25,49 @@ io.on('connection', (socket) => {
     socket.on('message', (data) => {
         io.emit('message', data);
     });
-socket.on('log', (data) => {
-    console.log(data)
-  if (games[data.room]) {
-      games[data.room].push(data.name)
-  }else{
-      games[data.room] = [data.name]
-  }
-    console.log(games)
-  if(games[data.room].length <= 2){
-    //ctx.socket.join(data.room);
-    //app.io.broadcast( 'game', data);
-    console.log('client sent data to message endpoint', data);
-    // ctx.socket.in(data.room).emit('game', { chicken: 'tasty' });
-  } else
-    console.log('room full');
-   // app.io.broadcast( 'game', {error: "full room"});
-})
+    socket.on('log', (data) => {
+        console.log('here', data)
+        const roomName = data.room;
+        if (games[data.room]) {
+            games[data.room].push(data.name)
+        } else {
+            games[data.room] = [data.name]
+        }
+        console.log(games, data.room)
+        if (games[data.room].length == 2) {
+            socket.join(data.room);
+            socket.broadcast.emit('game', data);
+            console.log('client sent data to message endpoint', data);
+            io.to(roomName).emit('game', { 
+                message: `${data.name} has joined the game`,
+                players: games[roomName] 
+            });
+            // ctx.socket.in(data.room).emit('game', { chicken: 'tasty' });
+        } else if (games[data.room].length > 2) {
+            console.log('room full');
+            socket.broadcast.emit('game', { error: "full room" });
+        } else {
+            console.log('waiting for more players');
+          //  socket.broadcast.emit('game', { message: "waiting for more players" });
+        }
+    })
+
+    socket.on('game', (data) => {
+        console.log('client sent data to game endpoint', data);
+ socket.to(data.room).emit('game', { message: data.jutsu });
+    })
 });
+
+
 
 
 type Games = {
-  [key: string] : any[]
+    [key: string]: any[]
 }
 
-let games:Games = {}
+let games: Games = {}
 let gamesArr = []
 
-io.on('game', (ctx, data) => {
-  console.log(data)
-  ctx.socket.to(data.room).emit('game', { message: data.jutsu });
-    // ctx.socket.in(data.room).emit('game', { message: 'tasty' });
-
-    
-})
-
-io.on('log', (ctx, data) => {
-console.log(data)
-  if (games[data.room]) {
-      games[data.room].push(data.name)
-  }else{
-      games[data.room] = [data.name]
-  }
-    console.log(games)
-  if(games[data.room].length <= 2){
-    ctx.socket.join(data.room);
-    app.io.broadcast( 'game', data);
-    console.log('client sent data to message endpoint', data);
-    // ctx.socket.in(data.room).emit('game', { chicken: 'tasty' });
-  } /*else
-    app.io.broadcast( 'game', {error: "full room"});*/
-});
 
 
 const PORT = 3000;

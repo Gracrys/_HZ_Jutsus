@@ -23,7 +23,8 @@ function game(e: KeyboardEvent) {
 	if (!$check) {
 		if ((/Enter/i).test(k)) {
 			currentJutsu = jutsus?.[keyState];
-			sc.emit('game', { ...ls, jutsu: jutsus?.[keyState] });
+            console.log(ls)
+			sc.emit('game', { ...$ls, jutsu: jutsus?.[keyState] });
 			keyState = '';
 		} else if ((/Backspace/i).test(k)) {
 			keyState = keyState.slice(0, -1);
