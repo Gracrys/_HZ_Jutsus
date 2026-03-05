@@ -10,7 +10,15 @@ export const sc = io();
 //const socket = io(URL);
 export const ip =  "10.10.1.117:3000"
 
-export const ls = writable({})
+interface Ils {
+    name: string
+    room: string
+}
+
+
+const ls2: Ils = { name: '', room: '' };
+// 
+export const ls = writable({} as Ils)
 
 export const check = writable(true)
 

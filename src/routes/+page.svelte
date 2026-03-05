@@ -3,7 +3,9 @@ import { onMount } from 'svelte';
 import Modal from '$lib/components/modal.svelte';
 import { sc, check, ls } from '$lib/stores/sc.store';
 
-const jutsus = []
+let { jutsus } = $props();
+
+
 
 let keyState =$state('');
 let currentJutsu: any = null;
@@ -12,7 +14,7 @@ onMount(() => {
 	sc.on('game', (x: any) => {
 		check.set(false);
 		console.warn(x, 'suck');
-		if (x?.message) alert(x.message);
+		if (x?.message) alert(x.message.kanji);
 	});
 });
 

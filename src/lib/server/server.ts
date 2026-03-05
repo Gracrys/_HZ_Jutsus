@@ -2,20 +2,27 @@ import Koa from 'koa';
 import http from 'http';
 import { Server } from 'socket.io';
 import 'dotenv/config';
+import syncDatabase from './db';
 const isDev = process.env.NODE_ENV === 'dev';
 
 console.log(process.env.NODE_ENV)
+await syncDatabase()
 
 const app = new Koa();
 const server = http.createServer(app.callback());
 const io = new Server(server)
 
 if (!isDev) {
-    const { handler } = await import('./build/handler.js');
-    app.use(async (ctx) => {
-        await handler(ctx.req, ctx.res);
-        ctx.respond = false;
-    });
+    try {
+       /* const { handler } = await import('../build/handler.js');
+        app.use(async (ctx) => {
+            await handler(ctx.req, ctx.res);
+            ctx.respond = false;
+        });*/
+    } catch (error) {
+        console.error('Failed to load build handler:', error);
+        console.log('Running in Dev Mode: Koa is only handling Sockets/API');
+    }
 } else {
     console.log('Running in Dev Mode: Koa is only handling Sockets/API');
 }
