@@ -8,6 +8,7 @@ export interface IJutsu {
 	element: string;
 	kanji: string;
 	symbol?: string;
+    damage?: number;
 	details?: {
 		spread?: number;
 		distance?: number;
@@ -53,6 +54,11 @@ Jutsu.init(
 			type: DataTypes.STRING,
 			allowNull: true
 		},
+        damage:{
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 1
+        },
 		details: {
 			type: DataTypes.JSON,
 			allowNull: true,
